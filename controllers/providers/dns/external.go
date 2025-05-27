@@ -65,6 +65,8 @@ func (p *ExternalDNSProvider) CreateZoneDelegationForExternalDNS(gslb *k8gbv1bet
 	var err error
 	if p.config.CoreDNSExposed {
 		NSServerIPs, err = p.assistant.CoreDNSExposedIPs()
+	} else if p.config.CoreDNSServer != "" {
+		NSServerIPs = []string{p.config.CoreDNSServer}
 	} else {
 		NSServerIPs = gslb.Status.LoadBalancer.ExposedIPs
 	}

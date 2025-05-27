@@ -364,6 +364,14 @@
             "type": "object",
             "additionalProperties": false,
             "properties": {
+                "coreDNSServer": {
+                    "type": "string",
+                    "minLength": 0
+                },
+                "coreDNSPort": {
+                    "type": "string",
+                    "minLength": 0
+                },
                 "extra_plugins": {
                     "type": [
                         "array",

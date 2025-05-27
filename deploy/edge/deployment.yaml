@@ -15,7 +15,7 @@ spec:
     spec:
       initContainers:
       - name: copy-zone
-        image: gcr.io/google_containers/busybox
+        image: registry-dev.21vianet.com/system_containers/bind9:9.18
         command: [ "cp", "/etc/bind/k8s.zone", "/var/lib/bind/zones/k8s.zone" ]
         volumeMounts:
           - mountPath: /etc/bind
@@ -24,7 +24,7 @@ spec:
             name: zone-volume
       containers:
       - name: bind
-        image: internetsystemsconsortium/bind9:9.18
+        image: registry-dev.21vianet.com/system_containers/bind9:9.18
         ports:
         - containerPort: 1053
           protocol: TCP
@@ -33,6 +33,11 @@ spec:
             name: config
           - mountPath: /var/lib/bind/zones
             name: zone-volume
+      hostNetwork: true
+      nodeSelector:
+        kubernetes.io/hostname: dev-k8s-node2
+      tolerations:
+      - operator: Exists
       volumes:
       - name: zone-volume
         emptyDir: {}

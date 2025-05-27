@@ -46,15 +46,17 @@ type Gslb struct {
 	client         client.Client
 	k8gbNamespace  string
 	edgeDNSServers utils.DNSList
+	coreDNSPort    int
 }
 
 var log = logging.Logger()
 
-func NewGslbAssistant(client client.Client, k8gbNamespace string, edgeDNSServers []utils.DNSServer) *Gslb {
+func NewGslbAssistant(client client.Client, k8gbNamespace string, edgeDNSServers []utils.DNSServer, coreDNSPort int) *Gslb {
 	return &Gslb{
 		client:         client,
 		k8gbNamespace:  k8gbNamespace,
 		edgeDNSServers: edgeDNSServers,
+		coreDNSPort:    coreDNSPort,
 	}
 }
 
@@ -280,7 +282,7 @@ func (r *Gslb) GetExternalTargets(host string, extClusterNsNames map[string]stri
 		} else {
 			hostToUse = cluster
 		}
-		nameServersToUse := getNSCombinations(r.edgeDNSServers, hostToUse)
+		nameServersToUse := getNSCombinations(r.edgeDNSServers, hostToUse, r.coreDNSPort)
 		lHost := fmt.Sprintf("localtargets-%s", host)
 		a, err := dnsQuery(lHost, nameServersToUse)
 		if err != nil {
@@ -298,13 +300,13 @@ func (r *Gslb) GetExternalTargets(host string, extClusterNsNames map[string]stri
 	return targets
 }
 
-func getNSCombinations(original []utils.DNSServer, hostToUse string) []utils.DNSServer {
-	portToUse := original[0].Port
-	nameServerToUse := []utils.DNSServer{
-		{
+func getNSCombinations(original []utils.DNSServer, hostToUse string, coreDNSPort int) []utils.DNSServer {
+	nameServerToUse := []utils.DNSServer{}
+	if coreDNSPort > 0 {
+		nameServerToUse = append(nameServerToUse, utils.DNSServer{
 			Host: hostToUse,
-			Port: portToUse,
-		},
+			Port: coreDNSPort,
+		})
 	}
 	defaultPortAdded := false
 	for _, s := range original {

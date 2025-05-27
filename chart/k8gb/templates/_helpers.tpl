@@ -84,7 +84,11 @@ Create the name of the service account to use
 {{- if .Values.route53.enabled -}}
 k8gb-{{ .Values.route53.hostedZoneID }}-{{ .Values.k8gb.clusterGeoTag }}
 {{- else -}}
-k8gb-{{ .Values.k8gb.dnsZone }}-{{ .Values.k8gb.clusterGeoTag }}
+{{- $prefix := "gslb-ns" -}}
+{{- $suffix := printf ".%s" .Values.k8gb.edgeDNSZone -}}
+{{- $trimmed := .Values.k8gb.dnsZone | trimSuffix $suffix -}}
+{{- $domainX := replace "." "-" $trimmed -}}
+{{- printf "%s-%s-%s.%s" $prefix .Values.k8gb.clusterGeoTag $domainX .Values.k8gb.edgeDNSZone -}}
 {{- end -}}
 {{- end -}}
 

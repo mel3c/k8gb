@@ -30,7 +30,7 @@ spec:
           - containerPort: {{ include "k8gb.metrics_port" . }}
             name: metrics
           image: {{ .Values.k8gb.imageRepo }}:{{ .Values.k8gb.imageTag | default .Chart.AppVersion }}
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           {{- if .Values.k8gb.securityContext }}
           securityContext:
             {{- toYaml .Values.k8gb.securityContext | nindent 12 }}
@@ -67,6 +67,16 @@ spec:
               value: {{ .Values.k8gb.dnsZone }}
             - name: RECONCILE_REQUEUE_SECONDS
               value: {{ quote .Values.k8gb.reconcileRequeueSeconds}}
+          {{- if ne .Values.coredns.serviceType "LoadBalancer" }}
+            {{- if .Values.k8gb.coredns.coreDNSServer }}
+            - name: COREDNS_SERVER
+              value: {{ .Values.k8gb.coredns.coreDNSServer }}
+            {{- end }}
+            {{- if .Values.k8gb.coredns.coreDNSPort }}
+            - name: COREDNS_PORT
+              value: {{ quote .Values.k8gb.coredns.coreDNSPort }}
+            {{- end }}
+          {{- end }}
             {{- if .Values.infoblox.enabled }}
             - name: INFOBLOX_GRID_HOST
               valueFrom:

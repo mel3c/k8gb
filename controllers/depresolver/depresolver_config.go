@@ -38,6 +38,8 @@ const (
 	ExtClustersGeoTagsKey      = "EXT_GSLB_CLUSTERS_GEO_TAGS"
 	ExtDNSEnabledKey           = "EXTDNS_ENABLED"
 	EdgeDNSServersKey          = "EDGE_DNS_SERVERS"
+	CoreDNSServerKey           = "COREDNS_SERVER"
+	CoreDNSPortKey             = "COREDNS_PORT"
 	EdgeDNSZoneKey             = "EDGE_DNS_ZONE"
 	DNSZoneKey                 = "DNS_ZONE"
 	InfobloxGridHostKey        = "INFOBLOX_GRID_HOST"
@@ -91,6 +93,8 @@ func (dr *DependencyResolver) ResolveOperatorConfig() (*Config, error) {
 		dr.config.Log.Level, _ = zerolog.ParseLevel(strings.ToLower(dr.config.Log.level))
 		dr.config.Log.Format = parseLogOutputFormat(strings.ToLower(dr.config.Log.format))
 		dr.config.EdgeDNSType, recognizedDNSTypes = getEdgeDNSType(dr.config)
+		dr.config.CoreDNSServer = env.GetEnvAsStringOrFallback(CoreDNSServerKey, "")
+		dr.config.CoreDNSPort, _ = env.GetEnvAsIntOrFallback(CoreDNSPortKey, 0)
 
 		// validation
 		dr.errorConfig = dr.validateConfig(dr.config, recognizedDNSTypes)
