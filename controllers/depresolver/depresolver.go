@@ -144,6 +144,10 @@ type Config struct {
 	Infoblox Infoblox
 	// CoreDNSExposed flag, deprecated
 	CoreDNSExposed bool `env:"COREDNS_EXPOSED, default=false"`
+	// CoreDNSServer flag
+	CoreDNSServer string `env:"COREDNS_SERVER"`
+	// CoreDNSPort flag
+	CoreDNSPort int `env:"COREDNS_PORT"`
 	// CoreDNSServiceType can be LoadBalancer or anything
 	CoreDNSServiceType string `env:"COREDNS_SERVICE_TYPE, default=ClusterIP"`
 	// Log configuration
