@@ -61,11 +61,13 @@ func (p *Dynamic) getExternalClusterNSNamesByHostname() (map[string]string, erro
 		return nsNames, nil
 	}
 	d := p.config.DelegationZones[0]
-	parentDNSServer, err := p.extractParentDNSServer(parentNameServer, d.ParentZone)
-	if err != nil {
-		return nsNames, fmt.Errorf("ExternalGeoTags: error extracting parent DNS servers: %w", err)
-	}
-	tags, err = p.getExternalTags(*parentDNSServer, d.LoadBalancedZone)
+	/*
+		parentDNSServer, err := p.extractParentDNSServer(parentNameServer, d.ParentZone)
+		if err != nil {
+			return nsNames, fmt.Errorf("ExternalGeoTags: error extracting parent DNS servers: %w", err)
+		}
+	*/
+	tags, err = p.getExternalTags(*parentNameServer, d.LoadBalancedZone)
 	if err != nil {
 		return nsNames, fmt.Errorf("ExternalGeoTags: reading geo tags: %w", err)
 	}
@@ -89,7 +91,7 @@ func (p *Dynamic) getExternalTags(edge utils.DNSServer, zone string) ([]string, 
 		return extTags, err
 	}
 
-	for _, ans := range r.Ns {
+	for _, ans := range r.Answer {
 		ns, ok := ans.(*dns.NS)
 		if !ok {
 			continue

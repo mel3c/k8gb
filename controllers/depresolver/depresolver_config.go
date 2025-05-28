@@ -45,6 +45,8 @@ const (
 	ExtDNSEnabledKey           = "EXTDNS_ENABLED"
 	ParentZoneDNSServersKey    = "EDGE_DNS_SERVERS"
 	DNSZonesKey                = "DNS_ZONES"
+	CoreDNSServerKey           = "COREDNS_SERVER"
+	CoreDNSPortKey             = "COREDNS_PORT"
 	InfobloxGridHostKey        = "INFOBLOX_GRID_HOST"
 	InfobloxVersionKey         = "INFOBLOX_WAPI_VERSION"
 	InfobloxPortKey            = "INFOBLOX_WAPI_PORT"
@@ -101,6 +103,8 @@ func (dr *DependencyResolver) ResolveOperatorConfig() (*Config, error) {
 		dr.config.Log.Level, _ = zerolog.ParseLevel(strings.ToLower(dr.config.Log.level))
 		dr.config.Log.Format = parseLogOutputFormat(strings.ToLower(dr.config.Log.format))
 		dr.config.EdgeDNSType, recognizedDNSTypes = getEdgeDNSType(dr.config)
+		dr.config.CoreDNSServer = env.GetEnvAsStringOrFallback(CoreDNSServerKey, "")
+		dr.config.CoreDNSPort, _ = env.GetEnvAsIntOrFallback(CoreDNSPortKey, 0)
 
 		// replace validations by go-playground/validator
 		dr.errorConfig = dr.validateConfig(dr.config, recognizedDNSTypes)

@@ -223,7 +223,7 @@ func (d *ApplicationDNSEndpoint) GetExternalTargets(host string) (targets Target
 		} else {
 			hostToUse = cluster
 		}
-		nameServersToUse := getNSCombinations(d.config.ParentZoneDNSServers, hostToUse)
+		nameServersToUse := getNSCombinations(d.config.ParentZoneDNSServers, hostToUse, d.config.CoreDNSPort)
 		lHost := fmt.Sprintf("localtargets-%s", host)
 		a, err := d.queryService.Query(lHost, nameServersToUse)
 		if err != nil {
