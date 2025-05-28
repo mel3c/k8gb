@@ -99,13 +99,13 @@ func removeEndpoint(ctx context.Context, client client.Client, endpointKey clien
 	return err
 }
 
-func getNSCombinations(original []utils.DNSServer, hostToUse string) utils.DNSList {
-	portToUse := original[0].Port
-	nameServerToUse := []utils.DNSServer{
-		{
+func getNSCombinations(original []utils.DNSServer, hostToUse string, coreDNSPort int) utils.DNSList {
+	nameServerToUse := []utils.DNSServer{}
+	if coreDNSPort > 0 {
+		nameServerToUse = append(nameServerToUse, utils.DNSServer{
 			Host: hostToUse,
-			Port: portToUse,
-		},
+			Port: coreDNSPort,
+		})
 	}
 	defaultPortAdded := false
 	for _, s := range original {

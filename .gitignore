@@ -13,7 +13,7 @@ Session.vim
 tags
 
 # Helm charts
-chart/k8gb/charts/*.tgz
+#chart/k8gb/charts/*.tgz
 
 # OLM
 /olm/bundle

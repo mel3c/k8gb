@@ -1,0 +1,22 @@
+{{- if and (eq .Values.coredns.serviceType "ClusterIP") .Values.k8gb.ingressClassName  }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  labels:
+    app: k8gb-init-ingress
+    k8gb.io/ip-source: "true"
+  name: k8gb-init-ingress
+spec:
+  ingressClassName: {{ .Values.k8gb.ingressClassName }}
+  rules:
+  - host: k8gb-init-ingress.example.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: k8gb-coredns
+            port:
+              name: udp-5353
+        path: /
+        pathType: Prefix
+{{- end }}

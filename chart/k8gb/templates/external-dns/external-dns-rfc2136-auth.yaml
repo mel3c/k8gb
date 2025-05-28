@@ -1,0 +1,9 @@
+{{- if and .Values.rfc2136.enabled .Values.rfc2136.rfc2136auth.tsig.enabled }}
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  name: rfc2136
+data:
+  secret: {{ .Values.rfc2136.rfc2136auth.tsig.tsigKey | b64enc | quote }}
+{{- end }}
