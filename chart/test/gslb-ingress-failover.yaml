@@ -1,0 +1,27 @@
+apiVersion: k8gb.absa.oss/v1beta1
+kind: Gslb
+metadata:
+  name: gslbtest
+  namespace: gaozh
+spec:
+  ingress:
+    ingressClassName: nginx
+    rules:
+    - host: nginx1.example.com
+      http:
+        paths:
+        - backend:
+            service:
+              name: nginx-test
+              port:
+                number: 80
+          path: /
+          pathType: Prefix
+  resourceRef:
+    apiVersion: ""
+    kind: ""
+  strategy:
+    dnsTtlSeconds: 30
+    primaryGeoTag: BeiJing
+    splitBrainThresholdSeconds: 300
+    type: failover

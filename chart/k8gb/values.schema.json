@@ -290,7 +290,7 @@
                 },
                 "extGslbClustersGeoTags": {
                     "type": "string",
-                    "minLength": 1
+                    "minLength": 0
                 },
                 "reconcileRequeueSeconds": {
                     "type": "integer",
@@ -331,11 +331,14 @@
                 },
                 "podLabels": {
                     "type": "object"
+                },
+                "ingressClassName": {
+                    "type": "string",
+                    "minLength": 0
                 }
             },
             "required": [
                 "clusterGeoTag",
-                "extGslbClustersGeoTags",
                 "edgeDNSServers",
                 "dnsZones"
             ],

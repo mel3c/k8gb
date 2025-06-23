@@ -6,9 +6,9 @@ global:
 
 k8gb:
   # -- image repository
-  imageRepo: "docker.io/absaoss/k8gb"
+  imageRepo: "registry-dev.21vianet.com/system_containers/k8gb-operator"
   # -- ( string ) image tag defaults to Chart.AppVersion, see Chart.yaml, but can be overrided with imageTag key
-  imageTag:
+  imageTag: v0.15.0
   # -- whether it should also deploy the gslb and dnsendpoints CRDs
   deployCrds: true
   # -- whether it should also deploy the service account, cluster role and cluster role binding
@@ -18,21 +18,21 @@ k8gb:
   #
   # -- array of dns zones controlled by gslb
   dnsZones:
-    - parentZone: "example.com" # -- parent zone which would contain gslb zone to delegate (same meaning as the old edgeDNSZone)
-      loadBalancedZone: "cloud.example.com" # -- zone controlled by gslb (same meaning as the old dnsZone)
-      dnsZoneNegTTL: 30  # -- Negative TTL for SOA record# -- host/ip[:port] format is supported here where port defaults to 53
+    - parentZone: "k8gb.com" # -- parent zone which would contain gslb zone to delegate (same meaning as the old edgeDNSZone)
+      loadBalancedZone: "k8s.k8gb.com" # -- zone controlled by gslb (same meaning as the old dnsZone)
+      dnsZoneNegTTL: 10  # -- Negative TTL for SOA record# -- host/ip[:port] format is supported here where port defaults to 53
   edgeDNSServers:
     # -- use this DNS server as a main resolver to enable cross k8gb DNS based communication
-    - "1.1.1.1"
+    - "172.22.222.102:53"
   # -- Unique geotag for this K8GB instance. This tag identifies the cluster's location or role (e.g., "eu", "us-east", "dc1" or "primary"). This tag should be present in all clusters’ extGslbClustersGeoTags
-  clusterGeoTag: "eu"
+  clusterGeoTag: "clustera"
   # -- Comma-separated list of geotags for external K8GB clusters. These are arbitrary, user-defined identifiers (e.g., "eu,us" or "dc2,dc3") used for coordination between K8GB instances
   # If the value remains empty, dynamic geotags extracted from the NS records on the edge DNS will be used.
-  extGslbClustersGeoTags: "eu,us"
+  extGslbClustersGeoTags: ""
   # -- Reconcile time in seconds
-  reconcileRequeueSeconds: 30
+  reconcileRequeueSeconds: 10
   # -- TTL of the NS and respective glue record used by external DNS
-  nsRecordTTL: 30
+  nsRecordTTL: 10
   coredns:
     # -- Extra CoreDNS server blocks
     extraServerBlocks: ""
@@ -63,6 +63,7 @@ k8gb:
   podAnnotations: {}
   # -- pod labels
   podLabels: {}
+  ingressClassName: "ingress-zsyqwihnae"
 
 externaldns:
   # -- `.spec.template.spec.dnsPolicy` for ExternalDNS deployment
@@ -78,7 +79,7 @@ externaldns:
   # functionality. See links below
   # https://github.com/k8gb-io/external-dns
   # https://github.com/k8gb-io/external-dns/pkgs/container/external-dns
-  image: registry.k8s.io/external-dns/external-dns:v0.15.1
+  image: registry-dev.21vianet.com/system_containers/external-dns:v0.15.1
   # -- external-dns sync interval
   interval: "20s"
   securityContext:
@@ -96,13 +97,13 @@ coredns:
     skipConfig: true
   image:
     # -- CoreDNS CRD plugin image
-    repository: absaoss/k8s_crd
+    repository: registry-dev.21vianet.com/system_containers/k8s_crd
     # -- image tag
     tag: v0.1.2
   # -- Creates serviceAccount for coredns
   serviceAccount:
     create: true
-    name: coredns
+    name: k8gb-coredns
   # -- Disables all permissions since we don't open privileged ports
   securityContext:
     capabilities:
@@ -162,15 +163,16 @@ ns1:
   ignoreSSL: false
 
 rfc2136:
-  enabled: false
+  enabled: true
   rfc2136Opts:
-    - host: host.k3d.internal
-    - port: 1053
+    - host: 172.22.222.102
+    - port: 53
   rfc2136auth:
     insecure:
       enabled: false
     tsig:
       enabled: true
+      tsigKey: "96Ah/a2g0/nLeFGK+d/0tzQcccf9hCEIy34PoXX2Qg8="
       tsigCreds:
         - tsig-secret-alg: hmac-sha256
         - tsig-keyname: externaldns-key

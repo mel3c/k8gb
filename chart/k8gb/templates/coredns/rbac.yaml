@@ -3,7 +3,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: coredns-cluster-role
+  name: k8gb-coredns-cluster-role
 rules:
 - apiGroups:
   - ""
@@ -23,13 +23,13 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: coredns-clusterrole-binding
+  name: k8gb-coredns-clusterrole-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: coredns-cluster-role
+  name: k8gb-coredns-cluster-role
 subjects:
 - kind: ServiceAccount
-  name: coredns
+  name: {{ .Values.coredns.serviceAccount.name }}
   namespace: {{ .Release.Namespace }}
 {{- end }}

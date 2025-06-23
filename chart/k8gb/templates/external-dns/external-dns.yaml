@@ -20,6 +20,7 @@ spec:
       containers:
       - name: external-dns
         image: {{ .Values.externaldns.image }}
+        imagePullPolicy: Always
         args:
         - --source=crd
 {{- $dnsZonesRaw := include "k8gb.dnsZonesString" . }}
@@ -30,7 +31,7 @@ spec:
         - --domain-filter={{ $parentZone }} # will make ExternalDNS see only the hosted zones matching provided domain, omit to process all available hosted zones
 {{- end }}
         - --policy=sync # enable full synchronization including record removal
-        - --log-level=debug # debug only
+        - --log-level=info # debug only
         - --managed-record-types=A
         - --managed-record-types=CNAME
         - --managed-record-types=NS

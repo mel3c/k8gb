@@ -33,7 +33,7 @@ spec:
           - containerPort: {{ include "k8gb.metrics_port" . }}
             name: metrics
           image: {{ .Values.k8gb.imageRepo }}:{{ .Values.k8gb.imageTag | default .Chart.AppVersion }}
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           {{- if .Values.k8gb.securityContext }}
           securityContext:
             {{- toYaml .Values.k8gb.securityContext | nindent 12 }}
@@ -62,8 +62,10 @@ spec:
               value: {{ quote .Values.coredns.serviceType }}
             - name: CLUSTER_GEO_TAG
               value: {{ quote .Values.k8gb.clusterGeoTag }}
+            {{- if .Values.k8gb.extGslbClustersGeoTags }}
             - name: EXT_GSLB_CLUSTERS_GEO_TAGS
               value: {{ quote .Values.k8gb.extGslbClustersGeoTags }}
+            {{- end }}
             - name: EDGE_DNS_SERVERS
               value: {{ include "k8gb.edgeDNSServers" . }}
             - name: DNS_ZONES

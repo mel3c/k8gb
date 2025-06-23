@@ -1,0 +1,25 @@
+apiVersion: k8gb.absa.oss/v1beta1
+kind: Gslb
+metadata:
+  name: gslbtenx
+spec:
+  ingress:
+    ingressClassName: ingress-zsyqwihnae
+    rules:
+      - host: test.k8s.k8gb.com
+        http:
+          paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: nginx-test
+                port:
+                  number: 80
+  strategy:
+    dnsTtlSeconds: 30
+    splitBrainThresholdSeconds: 300
+    type: roundRobin
+    weight:
+      clustera: 0
+      clusterb: 100
